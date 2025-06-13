@@ -24,6 +24,15 @@ app.layout = html.Div([
 
 def update_chart(n):
     latest = load_latest()
+    
+    try:
+        df = pd.read_csv("zuerichsee_history.csv")
+        if df.empty:
+            raise ValueError("CSV is empty")
+        latest = float(df["level"].iloc[-1])
+    except Exception as e:
+        print(f"Fehler beim Laden der Daten: {e}")
+        latest = 404.0  # Platzhalterwert (optional als Warnung anzeigen)
   
     fig = go.Figure(go.Indicator(  
         mode = "gauge+number+delta",

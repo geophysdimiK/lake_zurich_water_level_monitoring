@@ -4,6 +4,7 @@ import plotly.graph_objs as go
 import pandas as pd
 
 app = dash.Dash(__name__)
+server = app.server
 
 def load_latest():
     df = pd.read_csv("zuerichsee_history.csv", names=["timestamp", "level"])

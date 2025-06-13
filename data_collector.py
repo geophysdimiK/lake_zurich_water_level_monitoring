@@ -1,12 +1,23 @@
 import requests 
 import schedule
 import time 
+import os
 
 import pandas as pd 
 from datetime import datetime
 
 STATION = "mythenquai"
 URL = f"https://tecdottir.metaodi.ch/measurements/{STATION}?sort=timestamp_cet%20desc&limit=1"
+
+if not os.path.exists("zuerichsee_history.csv"):
+    response = requests.get(URL)
+    result = response.json()['result'][0]['values']
+    timestamp = result['timestamp_cet']['value']
+    level = result['water_level']['value']
+
+     with open("zuerichsee_history.csv", "w") as f:
+        f.write(f"{timestamp},{level}\n")
+    
 
 def fetch_and_save():
     response = requests.get(URL)

@@ -23,7 +23,6 @@ app.layout = html.Div([
 )
 
 def update_chart(n):
-    latest = load_latest()
     
     try:
         df = pd.read_csv("zuerichsee_history.csv")

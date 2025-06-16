@@ -36,8 +36,8 @@ def fetch_and_save():
     else:
         print(f"Error: {response.status_code}")
 
-# Fetch and save every 30 minutes
-schedule.every(30).minutes.do(fetch_and_save)
+# Fetch and save every 3 minutes
+schedule.every(3).minutes.do(fetch_and_save)
 
 # Continuous running of the script
 while True:

@@ -14,9 +14,10 @@ if not os.path.exists("zuerichsee_history.csv"):
     result = response.json()['result'][0]['values']
     timestamp = result['timestamp_cet']['value']
     level = result['water_level']['value']
+    pressure = result['barometric_pressure_qfe']['value']
 
      with open("zuerichsee_history.csv", "w") as f:
-        f.write(f"{timestamp},{level}\n")
+        f.write(f"{timestamp},{level},{pressure}\n")
     
 
 def fetch_and_save():
@@ -27,8 +28,9 @@ def fetch_and_save():
         result = response.json()['result'][0]['values'] #Extract the latest result set with the corresponding water level and the timestep
         timestamp = result['timestamp_cet']['value']
         level = result['water_level']['value']
+        pressure = result['barometric_pressure_qfe']['value']
 
-        df = pd.DataFrame([[timestamp, level]], columns=["timestamp", "level"])
+        df = pd.DataFrame([[timestamp, level, pressure]], columns=["timestamp", "level", "pressure"])
         df.to_csv("zuerichsee_history.csv", index=False, header=False)
         print(f"[{datetime.now()}] Saved: {timestamp} - {level} m")
     else:

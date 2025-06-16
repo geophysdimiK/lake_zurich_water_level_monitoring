@@ -27,8 +27,18 @@ def update_chart(n):
     try:
         df = pd.read_csv("zuerichsee_history.csv")
         if df.empty:
-            raise ValueError("CSV is empty")
-        latest = float(df["level"].iloc[-1])
+            print("CSV ist leer. Füge initialen Datensatz hinzu...")
+            url = "https://tecdottir.metaodi.ch/measurements/mythenquai.json"
+            response = requests.get(url)
+            data = response.json()
+            latest = data["measurements"][-1]
+            timestamp = latest["timestamp"]
+            value = latest["value"]
+            latest = float(df["level"].iloc[-1])
+
+            df = pd.DataFrame([[timestamp, value]], columns=["timestamp", "level"])
+            df.to_csv("zuerichsee_history.csv", index=False)
+    
     except Exception as e:
         print(f"Fehler beim Laden der Daten: {e}")
         latest = 404.0  # Platzhalterwert (optional als Warnung anzeigen)

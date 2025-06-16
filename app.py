@@ -15,7 +15,7 @@ def load_latest():
 app.layout = html.Div([
     html.H2("Zürichsee Luftdruck (Live)"),
     dcc.Graph(id="gauge-chart"),
-    dcc.Interval(id="interval", interval=30*60*1000, n_intervals=0)  # every 30 minutes
+    dcc.Interval(id="interval", interval=3*60*1000, n_intervals=0)  # every 3 minutes
 ])
 
 @app.callback(

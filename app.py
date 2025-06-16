@@ -9,7 +9,7 @@ server = app.server
 
 def load_latest():
     df = pd.read_csv("zuerichsee_history.csv", names=["timestamp", "level"])
-    latest_value = df["level"].iloc[-1]
+    latest_value = float(df["level"].iloc[-1])
     return latest_value
 
 app.layout = html.Div([

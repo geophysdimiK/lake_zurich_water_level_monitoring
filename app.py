@@ -49,9 +49,9 @@ def update_chart(n):
         mode = "gauge+number+delta",
         value = load_latest(),
         domain = {'x': [0, 1], 'y': [0, 1]},
-        delta = {'reference': 406.06, 'increasing': {'color': "RebeccaPurple"}},
+        delta = {'reference': 1013.25, 'increasing': {'color': "RebeccaPurple"}},
         gauge = {
-            'axis': {'range': [406, 407], 'tickwidth': 1, 'tickcolor': "darkblue"},
+            'axis': {'range': [0, 1200], 'tickwidth': 1, 'tickcolor': "darkblue"},
             'bar': {'color': "darkblue"},
             'bgcolor': "white",
             'borderwidth': 2,
@@ -65,7 +65,7 @@ def update_chart(n):
             'threshold': {
                 'line': {'color': "red", 'width': 4},
                 'thickness': 0.5,
-                'value': 1050}}))
+                'value': 1013.25}}))
     return fig
 
 if __name__ == "__main__":

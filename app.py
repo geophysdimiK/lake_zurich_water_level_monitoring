@@ -28,8 +28,9 @@ def update_chart(n):
         df = pd.read_csv("zuerichsee_history.csv")
         if df.empty:
             print("CSV ist leer. Füge initialen Datensatz hinzu...")
-            url = "https://tecdottir.metaodi.ch/measurements/mythenquai.json"
-            response = requests.get(url)
+            STATION = "mythenquai"
+            URL = f"https://tecdottir.metaodi.ch/measurements/{STATION}?sort=timestamp_cet%20desc&limit=1"
+            response = requests.get(URL)
             data = response.json()
             latest = data["measurements"][-1]
             timestamp = latest["timestamp"]

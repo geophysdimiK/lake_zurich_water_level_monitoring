@@ -24,14 +24,19 @@ if not os.path.exists(CSV_FILE):
     df.to_csv(CSV_FILE, index=False)
 
 def load_latest():
-    df = pd.read_csv("zuerichsee_history.csv", names=["timestamp", "level", "pressure"])
-    latest_value = float(df["pressure"].iloc[-1])
-    return latest_value
+    try:
+        df = pd.read_csv(CSV_FILE)
+        if df.empty:
+            return 404.0
+        return float(df["level"].iloc[-1])
+    except Exception as e:
+        print(f"Fehler beim Lesen der CSV: {e}")
+        return 404.0
 
 app.layout = html.Div([
-    html.H2("Zürichsee Luftdruck (Live)"),
+    html.H2("Zürichsee Wasserpegel (Update alle 30 Minuten)"),
     dcc.Graph(id="gauge-chart"),
-    dcc.Interval(id="interval", interval=3*60*1000, n_intervals=0)  # every 3 minutes
+    dcc.Interval(id="interval", interval=30*60*1000, n_intervals=0)  # every 30 minutes
 ])
 
 @app.callback(
@@ -40,49 +45,48 @@ app.layout = html.Div([
 )
 
 def update_chart(n):
-    
-    try:
-        df = pd.read_csv("zuerichsee_history.csv")
-        if df.empty:
-            print("CSV ist leer. Füge initialen Datensatz hinzu...")
-            STATION = "mythenquai"
-            URL = f"https://tecdottir.metaodi.ch/measurements/{STATION}?sort=timestamp_cet%20desc&limit=1"
-            response = requests.get(URL)
-            data = response.json()
-            latest = data['result'][-1]['values']
-            timestamp = latest['timestamp_cet']['value']
-            value = latest['water_level']['value']
-            pressure = latest['barometric_pressure_qfe']['value']
-
-            df = pd.DataFrame([[timestamp, value, pressure]], columns=["timestamp", "level", "pressure"])
-            df.to_csv("zuerichsee_history.csv", index=False)
-    
-    except Exception as e:
-        print(f"Fehler beim Laden der Daten: {e}")
-        latest = 404.0  # Platzhalterwert (optional als Warnung anzeigen)
+    latest = load_latest()
   
     fig = go.Figure(go.Indicator(  
         mode = "gauge+number+delta",
-        value = load_latest(),
+        value = latest,
         domain = {'x': [0, 1], 'y': [0, 1]},
-        delta = {'reference': 1013.25, 'increasing': {'color': "RebeccaPurple"}},
+        delta = {'reference': 406.06, 'increasing': {'color': "RebeccaPurple"}},
         gauge = {
-            'axis': {'range': [0, 1200], 'tickwidth': 1, 'tickcolor': "darkblue"},
+            'axis': {'range': [406, 407], 'tickwidth': 1, 'tickcolor': "darkblue"},
             'bar': {'color': "darkblue"},
             'bgcolor': "white",
             'borderwidth': 2,
             'bordercolor': "gray",
             'steps': [
-                {'range': [0, 250], 'color': 'white'}, #Here: the ranges are based on the federal water level classifications
-                {'range': [250, 500], 'color': 'yellow'},
-                {'range': [500, 750], 'color': 'orange'},
-                {'range': [750, 1000], 'color': 'red'},
-                {'range': [1000, 1200], 'color': 'brown'}],
+                {'range': [0, 406.25], 'color': 'white'}, #Here: the ranges are based on the federal water level classifications
+                {'range': [406.25, 406.4], 'color': 'yellow'},
+                {'range': [406.4, 406.6], 'color': 'orange'},
+                {'range': [406.6, 406.85], 'color': 'red'},
+                {'range': [406.85, 407], 'color': 'brown'}],
             'threshold': {
                 'line': {'color': "red", 'width': 4},
                 'thickness': 0.5,
-                'value': 1013.25}}))
+                'value': 406.06}}))
     return fig
+
+@server.route("/update", methods=["POST"])
+def update_csv():
+    try:
+        response = requests.get(API_URL)
+        data = response.json()
+        latest = data['result'][-1]['values']
+        timestamp = latest['timestamp_cet']['value']
+        value = latest['water_level']['value']
+
+        with open(CSV_FILE, "a") as f:
+            f.write(f"{timestamp},{value}\n")
+
+        print(f"Gespeichert: {timestamp} - {value}")
+        return "OK", 200
+    except Exception as e:
+        print(f"Fehler beim CSV-Update via /update: {e}")
+        return f"Fehler: {e}", 500
 
 if __name__ == "__main__":
     app.run_server(debug=True)

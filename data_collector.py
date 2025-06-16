@@ -16,7 +16,7 @@ if not os.path.exists("zuerichsee_history.csv"):
     level = result['water_level']['value']
     pressure = result['barometric_pressure_qfe']['value']
 
-     with open("zuerichsee_history.csv", "w") as f:
+    with open("zuerichsee_history.csv", "w") as f:
         f.write(f"{timestamp},{level},{pressure}\n")
     
 

@@ -29,7 +29,7 @@ def fetch_and_save():
         level = result['water_level']['value']
 
         df = pd.DataFrame([[timestamp, level]], columns=["timestamp", "level"])
-        df.to_csv("zuerichsee_history.csv", index=False, header=False, sep=';')
+        df.to_csv("zuerichsee_history.csv", index=False, header=False)
         print(f"[{datetime.now()}] Saved: {timestamp} - {level} m")
     else:
         print(f"Error: {response.status_code}")

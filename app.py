@@ -36,7 +36,7 @@ def update_chart(n):
             level = result['water_level']['value']
             level = float(df["level"].iloc[-1])
 
-            df = pd.DataFrame([[timestamp, value]], columns=["timestamp", "level"])
+            df = pd.DataFrame([[timestamp, level]], columns=["timestamp", "level"])
             df.to_csv("zuerichsee_history.csv", index=False)
     
     except Exception as e:
@@ -45,7 +45,7 @@ def update_chart(n):
   
     fig = go.Figure(go.Indicator(  
         mode = "gauge+number+delta",
-        value = latest,
+        value = df["level"],
         domain = {'x': [0, 1], 'y': [0, 1]},
         delta = {'reference': 406.06, 'increasing': {'color': "RebeccaPurple"}},
         gauge = {

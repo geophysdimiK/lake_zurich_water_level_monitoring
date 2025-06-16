@@ -37,7 +37,7 @@ def update_chart(n):
             timestamp = latest['timestamp_cet']['value']
             value = latest['water_level']['value']
 
-            df = pd.DataFrame([[timestamp, level]], columns=["timestamp", "level"])
+            df = pd.DataFrame([[timestamp, value]], columns=["timestamp", "level"])
             df.to_csv("zuerichsee_history.csv", index=False)
     
     except Exception as e:

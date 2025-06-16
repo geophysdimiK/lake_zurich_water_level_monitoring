@@ -8,12 +8,12 @@ app = dash.Dash(__name__)
 server = app.server
 
 def load_latest():
-    df = pd.read_csv("zuerichsee_history.csv", names=["timestamp", "level"])
-    latest_value = float(df["level"].iloc[-1])
+    df = pd.read_csv("zuerichsee_history.csv", names=["timestamp", "level", "pressure"])
+    latest_value = float(df["pressure"].iloc[-1])
     return latest_value
 
 app.layout = html.Div([
-    html.H2("Zürichsee Wasserpegel (Live)"),
+    html.H2("Zürichsee Luftdruck (Live)"),
     dcc.Graph(id="gauge-chart"),
     dcc.Interval(id="interval", interval=30*60*1000, n_intervals=0)  # every 30 minutes
 ])
@@ -36,8 +36,9 @@ def update_chart(n):
             latest = data['result'][-1]['values']
             timestamp = latest['timestamp_cet']['value']
             value = latest['water_level']['value']
+            pressure = latest['barometric_pressure_qfe']['value']
 
-            df = pd.DataFrame([[timestamp, value]], columns=["timestamp", "level"])
+            df = pd.DataFrame([[timestamp, value, pressure]], columns=["timestamp", "level", "pressure"])
             df.to_csv("zuerichsee_history.csv", index=False)
     
     except Exception as e:
@@ -56,15 +57,15 @@ def update_chart(n):
             'borderwidth': 2,
             'bordercolor': "gray",
             'steps': [
-                {'range': [0, 406.25], 'color': 'white'}, #Here: the ranges are based on the federal water level classifications
-                {'range': [406.25, 406.4], 'color': 'yellow'},
-                {'range': [406.4, 406.6], 'color': 'orange'},
-                {'range': [406.6, 406.85], 'color': 'red'},
-                {'range': [406.85, 407], 'color': 'brown'}],
+                {'range': [0, 250], 'color': 'white'}, #Here: the ranges are based on the federal water level classifications
+                {'range': [250, 500], 'color': 'yellow'},
+                {'range': [500, 750], 'color': 'orange'},
+                {'range': [750, 1000], 'color': 'red'},
+                {'range': [1000, 1200], 'color': 'brown'}],
             'threshold': {
                 'line': {'color': "red", 'width': 4},
                 'thickness': 0.5,
-                'value': 406.06}}))
+                'value': 1050}}))
     return fig
 
 if __name__ == "__main__":

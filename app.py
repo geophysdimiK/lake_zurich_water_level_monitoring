@@ -3,9 +3,25 @@ from dash import dcc, html
 import plotly.graph_objs as go
 import pandas as pd
 import requests
+import os
+from flask import request
 
 app = dash.Dash(__name__)
 server = app.server
+
+CSV_FILE = "zuerichsee_history.csv"
+STATION = "mythenquai"
+API_URL = f"https://tecdottir.metaodi.ch/measurements/{STATION}?sort=timestamp_cet%20desc&limit=1"
+
+if not os.path.exists(CSV_FILE):
+    print("CSV nicht gefunden – lade initialen Wasserstand...")
+    response = requests.get(API_URL)
+    data = response.json()
+    latest = data['result'][-1]['values']
+    timestamp = latest['timestamp_cet']['value']
+    value = latest['water_level']['value']
+    df = pd.DataFrame([[timestamp, value]], columns=["timestamp", "level"])
+    df.to_csv(CSV_FILE, index=False)
 
 def load_latest():
     df = pd.read_csv("zuerichsee_history.csv", names=["timestamp", "level", "pressure"])

@@ -46,7 +46,7 @@ def update_chart(n):
   
     fig = go.Figure(go.Indicator(  
         mode = "gauge+number+delta",
-        value = df["level"],
+        value = load_latest(),
         domain = {'x': [0, 1], 'y': [0, 1]},
         delta = {'reference': 406.06, 'increasing': {'color': "RebeccaPurple"}},
         gauge = {

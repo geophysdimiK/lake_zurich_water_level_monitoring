@@ -70,7 +70,7 @@ def update_chart(n):
                 'value': 406.06}}))
     return fig
 
-@server.route("/update", methods=["POST"])
+@server.route("/update", methods=["GET", "POST"])
 def update_csv():
     try:
         response = requests.get(API_URL)

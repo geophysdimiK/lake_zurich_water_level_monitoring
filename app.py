@@ -32,10 +32,10 @@ def update_chart(n):
             STATION = "mythenquai"
             URL = f"https://tecdottir.metaodi.ch/measurements/{STATION}?sort=timestamp_cet%20desc&limit=1"
             response = requests.get(URL)
-            data = response.json()['result'][0]['values']
-            timestamp = result['timestamp_cet']['value']
-            level = result['water_level']['value']
-            level = float(df["level"].iloc[-1])
+            data = response.json()
+            latest = data['result'][-1]['values']
+            timestamp = latest['timestamp_cet']['value']
+            value = latest['water_level']['value']
 
             df = pd.DataFrame([[timestamp, level]], columns=["timestamp", "level"])
             df.to_csv("zuerichsee_history.csv", index=False)
